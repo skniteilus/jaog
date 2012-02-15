@@ -17,7 +17,6 @@ package com.knitelius.jaog.processor;
 
 import static org.junit.Assert.*;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -26,6 +25,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.knitelius.jaog.generator.CSVGenerator;
+import com.knitelius.jaog.generator.CSVGeneratorFactory;
+import com.knitelius.jaog.generator.OrderedCSVGenerator;
 import com.knitelius.jaog.testobjects.Person;
 
 public class CSVGeneratorTest {
@@ -40,7 +41,7 @@ public class CSVGeneratorTest {
 	
 	@Test
 	public void test() throws IllegalArgumentException, IllegalAccessException {
-		CSVGenerator<Person> csvGenerator = new CSVGenerator<Person>(Person.class);
+		CSVGenerator<Person> csvGenerator = CSVGeneratorFactory.getCSVGenerator(Person.class);
 		csvGenerator.writeCSVtoStream(testData, System.out, true);
 	}
 
