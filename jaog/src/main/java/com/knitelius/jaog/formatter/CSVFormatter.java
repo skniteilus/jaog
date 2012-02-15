@@ -26,7 +26,8 @@ import com.knitelius.jaog.annotations.CSVField;
 
 public class CSVFormatter {
 	
-	private static final char DOUBLE_QUOTE = '"';
+	private static final String DOUBLE_QUOTE = "\"";
+	private static final String CSV_ESCAPED_DOUBLE_QUOTE = "\"\"";
 
 	public static Object applyFormat(Object value, final Field field) {
 		value = applyFormat(value, field, null);
@@ -40,6 +41,12 @@ public class CSVFormatter {
 		return value;
 	}
 	
+	/**
+	 * TODO: Localized auto formatter
+	 * @param value
+	 * @param locale
+	 * @return
+	 */
 	private static Object applyLocalizedFormatting(Object value, Locale locale) {
 		// TODO Auto-generated method stub
 		return value;
@@ -61,9 +68,15 @@ public class CSVFormatter {
 		return value;
 	}
 	
+	/**
+	 * Applies CSV Formatting to values, as per RFC4180
+	 * 
+	 * @param value
+	 * @return 
+	 */
 	public static Object applyCSVFormat(Object value) {
 		
-		value = value.toString().replace("\"", "\"\"");
+		value = value.toString().replace(DOUBLE_QUOTE, CSV_ESCAPED_DOUBLE_QUOTE);
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append(DOUBLE_QUOTE);
