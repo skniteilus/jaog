@@ -16,5 +16,12 @@
 package com.knitelius.jaog.generator;
 
 public class CSVGeneratorFactory {
-
+	/**
+	 * TODO: add other CSVGenerators
+	 * @param beanClass
+	 * @return
+	 */
+	public static <T> CSVGenerator<T> getCSVGenerator(Class<T> beanClass) {
+		return new OrderedCSVGenerator<T>(beanClass);
+	}
 }
