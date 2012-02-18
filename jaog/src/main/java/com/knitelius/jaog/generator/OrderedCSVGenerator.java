@@ -15,97 +15,55 @@
  */
 package com.knitelius.jaog.generator;
 
-import java.io.OutputStream;
+import java.beans.IntrospectionException;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
-import com.knitelius.jaog.annotations.CSVField;
 import com.knitelius.jaog.annotations.CSVOrder;
 import com.knitelius.jaog.formatter.CSVFormatter;
 
-public class OrderedCSVGenerator<T> implements CSVGenerator<T> {
+public class OrderedCSVGenerator<T> extends BaseCSVGenerator<T> {
 
-	private static final char NEWLINE = '\n';
-
-	private Class<T> beanClass;
-	private Locale locale = Locale.getDefault();
-	private char seperator = ';';
-	private String[] order;
-	private final Map<String, Field> beanFields = new HashMap<String, Field>();
-
-	public OrderedCSVGenerator(Class<T> beanClass) {
-		this.beanClass = beanClass;
-		init();
+	public OrderedCSVGenerator(Class<T> beanClass) throws IntrospectionException, SecurityException,
+			NoSuchFieldException {
+		super(beanClass);
 	}
 
-	public OrderedCSVGenerator(Class<T> beanClass, char seperator) {
-		this.beanClass = beanClass;
-		this.seperator = seperator;
-		init();
-	}
-	
-	public OrderedCSVGenerator(Class<T> beanClass, char seperator, Locale locale) {
-		this.beanClass = beanClass;
-		this.seperator = seperator;
-		this.locale = locale;
-		init();
+	public OrderedCSVGenerator(Class<T> beanClass, char seperator) throws IntrospectionException, SecurityException,
+			NoSuchFieldException {
+		super(beanClass, seperator);
 	}
 
-	private void init() {
+	public OrderedCSVGenerator(Class<T> beanClass, char seperator, Locale locale) throws IntrospectionException,
+			SecurityException, NoSuchFieldException {
+		super(beanClass, seperator, locale);
+	}
+
+	protected void init() throws SecurityException, IntrospectionException, NoSuchFieldException {
+		super.init();
 		CSVOrder csvOrder = beanClass.getAnnotation(CSVOrder.class);
-		if (csvOrder != null)
+		if (csvOrder != null) {
 			order = csvOrder.value();
-		Field[] fields = beanClass.getDeclaredFields();
-
-		for (Field field : fields) {
-			beanFields.put(field.getName(), field);
 		}
 	}
-	
-	public void writeCSVtoStream(Collection<T> beans, OutputStream out, boolean title) throws IllegalArgumentException, IllegalAccessException {
 
-		PrintStream printStream = new PrintStream(out);
-		
-		if(title) {
-			printStream = generateTitle(printStream);
-		}
-		
+	protected void printLines(Collection<T> beans, PrintStream printStream) throws IllegalArgumentException,
+			IllegalAccessException {
 		for (T bean : beans) {
 			for (String fieldName : order) {
 				Field field = beanFields.get(fieldName);
 				field.setAccessible(true);
 
 				Object value = field.get(bean);
-				
-				value = CSVFormatter.applyFormat(value, field);
-				
+
+				value = CSVFormatter.applyFormat(value, getCSVFieldAnnotation(fieldName), locale);
+
 				printStream.print(value);
-				printStream.print(seperator);
+				printStream.print(separater);
 			}
 			printStream.print(NEWLINE);
 		}
-	}
-
-	private PrintStream generateTitle(PrintStream out) {
-		for (String fieldName : order) {
-			CSVField csvFieldAnnotation = beanFields.get(fieldName).getAnnotation(CSVField.class);
-			if (csvFieldAnnotation != null) {
-				String title = csvFieldAnnotation.title();
-				if (title != null) {
-					out.print(CSVFormatter.applyCSVFormat(title));
-				}
-				else {
-					out.print(CSVFormatter.applyCSVFormat(fieldName));
-				}
-				out.print(seperator);
-			}
-		}
-		out.print(NEWLINE);
-
-		return out;
 	}
 }

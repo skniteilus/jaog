@@ -15,13 +15,43 @@
  */
 package com.knitelius.jaog.generator;
 
+import java.beans.IntrospectionException;
+import java.util.Locale;
+
+import com.knitelius.jaog.annotations.CSVOrder;
+
 public class CSVGeneratorFactory {
+	
+	private static final char DEFAULT_SEPARATER = ';';
+	
+	public static <T> CSVGenerator<T> getCSVGenerator(Class<T> beanClass) throws IntrospectionException, SecurityException, NoSuchFieldException {
+		return getCSVGenerator(beanClass, null, DEFAULT_SEPARATER);
+	}
+	
+	public static <T> CSVGenerator<T> getCSVGenerator(Class<T> beanClass, Locale locale) throws IntrospectionException, SecurityException, NoSuchFieldException {
+		return getCSVGenerator(beanClass, locale, DEFAULT_SEPARATER);
+	}
+	
 	/**
-	 * TODO: add other CSVGenerators
+	 * 
+	 * 
 	 * @param beanClass
 	 * @return
+	 * @throws IntrospectionException 
+	 * @throws NoSuchFieldException 
+	 * @throws SecurityException 
 	 */
-	public static <T> CSVGenerator<T> getCSVGenerator(Class<T> beanClass) {
-		return new OrderedCSVGenerator<T>(beanClass);
+	public static <T> CSVGenerator<T> getCSVGenerator(Class<T> beanClass, Locale locale, char seperator) throws IntrospectionException, SecurityException, NoSuchFieldException {
+		if(beanClass==null) throw new IllegalArgumentException("Class may not be null!");
+		
+		if(beanClass.isInterface()) {
+			return new InterfacedBeanCSVGenerator<T>(beanClass, seperator, locale);
+		}
+		else if(beanClass.getAnnotation(CSVOrder.class) != null){
+			return new OrderedCSVGenerator<T>(beanClass, seperator, locale);
+		}
+		else {
+			return new DefaultCSVGenerator<T>(beanClass, seperator, locale);
+		}
 	}
 }
