@@ -16,7 +16,7 @@
 
 package com.knitelius.jaog.formatter;
 
-import java.lang.reflect.Field;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,42 +29,37 @@ public class CSVFormatter {
 	private static final String DOUBLE_QUOTE = "\"";
 	private static final String CSV_ESCAPED_DOUBLE_QUOTE = "\"\"";
 
-	public static Object applyFormat(Object value, final Field field) {
-		value = applyFormat(value, field, null);
-		return value;
-	}
-	
-	public static Object applyFormat(Object value, final Field field, Locale locale) {
-		if(fieldHasAnnotationFormat(field)) value = applyAnnotationFormatting(value, field);
-		else if(locale!=null) value = applyLocalizedFormatting(value, locale);
-		value = applyCSVFormat(value);
+	/**
+	 * TODO: Description
+	 * 
+	 * @param value
+	 * @param csvFieldAnnotation
+	 * @return
+	 */
+	public static Object applyFormat(Object value, final CSVField csvFieldAnnotation) {
+		value = applyFormat(value, csvFieldAnnotation, null);
 		return value;
 	}
 	
 	/**
-	 * TODO: Localized auto formatter
+	 * TODO: Description 
+	 * 
 	 * @param value
+	 * @param csvFieldAnnotation
 	 * @param locale
 	 * @return
 	 */
-	private static Object applyLocalizedFormatting(Object value, Locale locale) {
-		// TODO Auto-generated method stub
-		return value;
-	}
-
-	private static Object applyAnnotationFormatting(Object value, Field field) {
-		CSVField csvFieldAnnotation = field.getAnnotation(CSVField.class);
-		String format = csvFieldAnnotation.format();
-		if(format != null && format.length()>0) {
-			Class<?> fieldType = field.getType();
-			
-			if(fieldType == Date.class) {
-				value = new SimpleDateFormat(format).format(value);
-			}
-			else if (fieldType.isAssignableFrom(Number.class)) {
-				value = new DecimalFormat(format).format(value);
-			}
+	public static Object applyFormat(Object value, final CSVField csvFieldAnnotation, Locale locale) {
+		if(value==null) value = "null";
+		
+		if(csvFieldAnnotation!=null) {
+			value = applyAnnotationFormatting(value, csvFieldAnnotation);
 		}
+		else if(locale!=null) {
+			value = applyLocalizedFormatting(value, locale);
+		}
+		value = applyCSVFormat(value);
+		
 		return value;
 	}
 	
@@ -75,6 +70,7 @@ public class CSVFormatter {
 	 * @return 
 	 */
 	public static Object applyCSVFormat(Object value) {
+		if(value == null) value = "null";
 		
 		value = value.toString().replace(DOUBLE_QUOTE, CSV_ESCAPED_DOUBLE_QUOTE);
 		
@@ -86,9 +82,44 @@ public class CSVFormatter {
 		return sb.toString();
 	}
 	
-	private static boolean fieldHasAnnotationFormat(Field field) {
-		CSVField csvFieldAnnotation = field.getAnnotation(CSVField.class);
+	/**
+	 * Applies Localized Formatting if no format has been specified in the annotation 
+	 * 
+	 * @param value
+	 * @param locale
+	 * @return
+	 */
+	private static Object applyLocalizedFormatting(Object value, Locale locale) {
+		Class<?> fieldType = value.getClass();
+		if(fieldType == Date.class) {
+			value = DateFormat.getDateInstance(DateFormat.MEDIUM, locale).format(value);
+		}
+		else if (fieldType.isAssignableFrom(Number.class)) {
+			value = DecimalFormat.getInstance(locale).format(value);
+		}
+		return value;
+	}
+	
+	/**
+	 * Applies the formatting specified in the Annotation
+	 * (only for Date and Number)
+	 * 
+	 * @param value
+	 * @param field
+	 * @return
+	 */
+	private static Object applyAnnotationFormatting(Object value, CSVField csvFieldAnnotation) {
 		String format = csvFieldAnnotation.format();
-		return (format != null && format.length()>0);
+		if(format != null && format.length()>0) {
+			Class<?> fieldType = value.getClass();
+			
+			if(fieldType == Date.class) {
+				value = new SimpleDateFormat(format).format(value);
+			}
+			else if (fieldType.isAssignableFrom(Number.class)) {
+				value = new DecimalFormat(format).format(value);
+			}
+		}
+		return value;
 	}
 }
