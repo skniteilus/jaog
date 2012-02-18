@@ -35,27 +35,29 @@ import com.knitelius.jaog.formatter.CSVFormatter;
 public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 
 	protected static final char NEWLINE = '\n';
-	
+
 	protected Class<T> beanClass;
 	protected Locale locale = Locale.getDefault();
 	protected char separater = ';';
 	protected String[] order;
 	protected Map<String, Field> beanFields = new HashMap<String, Field>();
-	protected Map<String, Method> getterMethods = new HashMap<String,Method>();
+	protected Map<String, Method> getterMethods = new HashMap<String, Method>();
 	protected Collection<PropertyDescriptor> getterMethodPD = new ArrayList<PropertyDescriptor>();
-	
+
 	public BaseCSVGenerator(Class<T> beanClass) throws IntrospectionException, SecurityException, NoSuchFieldException {
 		this.beanClass = beanClass;
 		init();
 	}
 
-	public BaseCSVGenerator(Class<T> beanClass, char seperater) throws IntrospectionException, SecurityException, NoSuchFieldException {
+	public BaseCSVGenerator(Class<T> beanClass, char seperater) throws IntrospectionException, SecurityException,
+			NoSuchFieldException {
 		this.beanClass = beanClass;
 		this.separater = seperater;
 		init();
 	}
 
-	public BaseCSVGenerator(Class<T> beanClass, char separater, Locale locale) throws IntrospectionException, SecurityException, NoSuchFieldException {
+	public BaseCSVGenerator(Class<T> beanClass, char separater, Locale locale) throws IntrospectionException,
+			SecurityException, NoSuchFieldException {
 		this.beanClass = beanClass;
 		this.separater = separater;
 		this.locale = locale;
@@ -66,9 +68,9 @@ public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 		for (PropertyDescriptor pd : Introspector.getBeanInfo(beanClass).getPropertyDescriptors()) {
 			if (pd.getReadMethod() != null && !"class".equals(pd.getName())) {
 				getterMethodPD.add(pd);
-				
-				getterMethods.put(pd.getName(),pd.getReadMethod());
-				if(!beanClass.isInterface()) {
+
+				getterMethods.put(pd.getName(), pd.getReadMethod());
+				if (!beanClass.isInterface()) {
 					Field field = beanClass.getDeclaredField(pd.getName());
 					beanFields.put(field.getName(), field);
 				}
@@ -86,8 +88,9 @@ public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 		}
 		printLines(beans, printStream);
 	}
-	
-	protected abstract void printLines(Collection<T> beans, PrintStream printStream) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException;
+
+	protected abstract void printLines(Collection<T> beans, PrintStream printStream) throws IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException;
 
 	protected PrintStream generateTitle(PrintStream printStream) {
 		for (String fieldName : order) {
@@ -101,25 +104,26 @@ public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 
 		return printStream;
 	}
-	
+
 	/**
-	 * Returns the CSVField Annotation of either the method or the field
-	 * Null is returned if no annotation is found
+	 * Returns the CSVField Annotation of either the method or the field Null is
+	 * returned if no annotation is found
 	 * 
 	 * @param fieldName
 	 * @return CSVField Annotation
 	 */
 	protected CSVField getCSVFieldAnnotation(String fieldName) {
-		
+
 		Method getterMethod = getterMethods.get(fieldName);
-		
-		if(getterMethod != null) {
+
+		if (getterMethod != null) {
 			CSVField csvField = getterMethod.getAnnotation(CSVField.class);
-			if(csvField!=null) return csvField;
+			if (csvField != null)
+				return csvField;
 		}
-		
+
 		Field field = beanFields.get(fieldName);
-		if(field != null) {
+		if (field != null) {
 			CSVField csvFieldAnnotation = field.getAnnotation(CSVField.class);
 			return csvFieldAnnotation;
 		}
