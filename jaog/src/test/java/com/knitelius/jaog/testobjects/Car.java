@@ -20,45 +20,13 @@ import java.util.Date;
 import com.knitelius.jaog.annotations.CSVField;
 import com.knitelius.jaog.annotations.CSVOrder;
 
-@CSVOrder({"firstName","lastName","dob"})
-public class Person {
+@CSVOrder({"model", "licensePlate", "registrationDate"})
+public interface Car {
+	public String getModel();
 	
-	public Person(String firstName, String lastName, Date dob) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.dob = dob;
-	}
+	@CSVField(title="License Plate")
+	public String getLicensePlate();
 	
-	@CSVField(title="First Name") 
-	private String firstName;
-	
-	@CSVField(title="Last Name")
-	private String lastName;
-	
-	@CSVField(title="DOB", format="dd/MM/yyyy")
-	private Date dob;
-	
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public Date getDob() {
-		return dob;
-	}
-
-	public void setDob(Date dob) {
-		this.dob = dob;
-	}
+	@CSVField(format="dd/MM/yyyy")
+	public Date getRegistrationDate();
 }
