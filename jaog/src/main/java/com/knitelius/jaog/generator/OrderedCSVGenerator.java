@@ -31,14 +31,14 @@ public class OrderedCSVGenerator<T> extends BaseCSVGenerator<T> {
 		super(beanClass);
 	}
 
-	public OrderedCSVGenerator(Class<T> beanClass, char seperator) throws IntrospectionException, SecurityException,
+	public OrderedCSVGenerator(Class<T> beanClass, char delimiter) throws IntrospectionException, SecurityException,
 			NoSuchFieldException {
-		super(beanClass, seperator);
+		super(beanClass, delimiter);
 	}
 
-	public OrderedCSVGenerator(Class<T> beanClass, char seperator, Locale locale) throws IntrospectionException,
+	public OrderedCSVGenerator(Class<T> beanClass, char delimiter, Locale locale) throws IntrospectionException,
 			SecurityException, NoSuchFieldException {
-		super(beanClass, seperator, locale);
+		super(beanClass, delimiter, locale);
 	}
 
 	protected void init() throws SecurityException, IntrospectionException, NoSuchFieldException {
@@ -61,7 +61,7 @@ public class OrderedCSVGenerator<T> extends BaseCSVGenerator<T> {
 				value = CSVFormatter.applyFormat(value, getCSVFieldAnnotation(fieldName), locale);
 
 				printStream.print(value);
-				printStream.print(separater);
+				printStream.print(delimiter);
 			}
 			printStream.print(NEWLINE);
 		}

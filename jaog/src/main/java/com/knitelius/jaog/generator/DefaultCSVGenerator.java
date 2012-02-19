@@ -35,12 +35,12 @@ public class DefaultCSVGenerator<T> extends BaseCSVGenerator<T> {
 		super(beanClass);
 	}
 
-	public DefaultCSVGenerator(Class<T> beanClass, char seperator) throws IntrospectionException, SecurityException, NoSuchFieldException {
-		super(beanClass, seperator);
+	public DefaultCSVGenerator(Class<T> beanClass, char delimiter) throws IntrospectionException, SecurityException, NoSuchFieldException {
+		super(beanClass, delimiter);
 	}
 
-	public DefaultCSVGenerator(Class<T> beanClass, char seperator, Locale locale) throws IntrospectionException, SecurityException, NoSuchFieldException {
-		super(beanClass, seperator, locale);
+	public DefaultCSVGenerator(Class<T> beanClass, char delimiter, Locale locale) throws IntrospectionException, SecurityException, NoSuchFieldException {
+		super(beanClass, delimiter, locale);
 	}
 
 	protected void init() throws IntrospectionException, SecurityException, NoSuchFieldException {
@@ -57,7 +57,7 @@ public class DefaultCSVGenerator<T> extends BaseCSVGenerator<T> {
 	protected PrintStream generateTitle(PrintStream printStream) {
 		for(PropertyDescriptor gMpD : getterMethodPD) {
 			printStream.print(CSVFormatter.applyCSVFormat(gMpD.getName()));
-			printStream.print(separater);
+			printStream.print(delimiter);
 		}
 		printStream.print(NEWLINE);
 		return printStream;
@@ -68,7 +68,7 @@ public class DefaultCSVGenerator<T> extends BaseCSVGenerator<T> {
 		for(T bean : beans) {
 			for(PropertyDescriptor gMpD : getterMethodPD) {
 				printStream.print(CSVFormatter.applyCSVFormat(gMpD.getReadMethod().invoke(bean)));
-				printStream.print(separater);
+				printStream.print(delimiter);
 			}
 			printStream.print(NEWLINE);
 		}

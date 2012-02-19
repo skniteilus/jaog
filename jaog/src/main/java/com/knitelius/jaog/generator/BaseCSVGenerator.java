@@ -38,7 +38,7 @@ public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 
 	protected Class<T> beanClass;
 	protected Locale locale = Locale.getDefault();
-	protected char separater = ';';
+	protected char delimiter = ';';
 	protected String[] order;
 	protected Map<String, Field> beanFields = new HashMap<String, Field>();
 	protected Map<String, Method> getterMethods = new HashMap<String, Method>();
@@ -49,17 +49,17 @@ public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 		init();
 	}
 
-	public BaseCSVGenerator(Class<T> beanClass, char seperater) throws IntrospectionException, SecurityException,
+	public BaseCSVGenerator(Class<T> beanClass, char delimiter) throws IntrospectionException, SecurityException,
 			NoSuchFieldException {
 		this.beanClass = beanClass;
-		this.separater = seperater;
+		this.delimiter = delimiter;
 		init();
 	}
 
-	public BaseCSVGenerator(Class<T> beanClass, char separater, Locale locale) throws IntrospectionException,
+	public BaseCSVGenerator(Class<T> beanClass, char delimiter, Locale locale) throws IntrospectionException,
 			SecurityException, NoSuchFieldException {
 		this.beanClass = beanClass;
-		this.separater = separater;
+		this.delimiter = delimiter;
 		this.locale = locale;
 		init();
 	}
@@ -98,7 +98,7 @@ public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 			String title = csvFieldAnnotation != null && csvFieldAnnotation.title().length() > 0 ? csvFieldAnnotation
 					.title() : fieldName;
 			printStream.print(CSVFormatter.applyCSVFormat(title));
-			printStream.print(separater);
+			printStream.print(delimiter);
 		}
 		printStream.print(NEWLINE);
 

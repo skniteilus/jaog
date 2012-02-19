@@ -22,18 +22,37 @@ import com.knitelius.jaog.annotations.CSVOrder;
 
 public class CSVGeneratorFactory {
 	
-	private static final char DEFAULT_SEPARATER = ';';
+	private static final char DEFAULT_DELIMITER = ';';
 	
+	/**
+	 * TODO: Description
+	 * 
+	 * @param beanClass
+	 * @return
+	 * @throws IntrospectionException
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 */
 	public static <T> CSVGenerator<T> getCSVGenerator(Class<T> beanClass) throws IntrospectionException, SecurityException, NoSuchFieldException {
-		return getCSVGenerator(beanClass, null, DEFAULT_SEPARATER);
-	}
-	
-	public static <T> CSVGenerator<T> getCSVGenerator(Class<T> beanClass, Locale locale) throws IntrospectionException, SecurityException, NoSuchFieldException {
-		return getCSVGenerator(beanClass, locale, DEFAULT_SEPARATER);
+		return getCSVGenerator(beanClass, null, DEFAULT_DELIMITER);
 	}
 	
 	/**
+	 * TODO: Description
 	 * 
+	 * @param beanClass
+	 * @param locale
+	 * @return
+	 * @throws IntrospectionException
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 */
+	public static <T> CSVGenerator<T> getCSVGenerator(Class<T> beanClass, Locale locale) throws IntrospectionException, SecurityException, NoSuchFieldException {
+		return getCSVGenerator(beanClass, locale, DEFAULT_DELIMITER);
+	}
+	
+	/**
+	 * TODO: Description
 	 * 
 	 * @param beanClass
 	 * @return
@@ -41,17 +60,17 @@ public class CSVGeneratorFactory {
 	 * @throws NoSuchFieldException 
 	 * @throws SecurityException 
 	 */
-	public static <T> CSVGenerator<T> getCSVGenerator(Class<T> beanClass, Locale locale, char seperator) throws IntrospectionException, SecurityException, NoSuchFieldException {
+	public static <T> CSVGenerator<T> getCSVGenerator(Class<T> beanClass, Locale locale, char delimiter) throws IntrospectionException, SecurityException, NoSuchFieldException {
 		if(beanClass==null) throw new IllegalArgumentException("Class may not be null!");
 		
 		if(beanClass.isInterface()) {
-			return new InterfacedBeanCSVGenerator<T>(beanClass, seperator, locale);
+			return new InterfacedBeanCSVGenerator<T>(beanClass, delimiter, locale);
 		}
-		else if(beanClass.getAnnotation(CSVOrder.class) != null){
-			return new OrderedCSVGenerator<T>(beanClass, seperator, locale);
+		else if(beanClass.getAnnotation(CSVOrder.class) != null) {
+			return new OrderedCSVGenerator<T>(beanClass, delimiter, locale);
 		}
 		else {
-			return new DefaultCSVGenerator<T>(beanClass, seperator, locale);
+			return new DefaultCSVGenerator<T>(beanClass, delimiter, locale);
 		}
 	}
 }

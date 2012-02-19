@@ -61,7 +61,7 @@ public class InterfacedBeanCSVGenerator<T> extends BaseCSVGenerator<T> {
 				Method method = getterMethods.get(fieldName);
 				Object value = method.invoke(bean);
 				printStream.print(CSVFormatter.applyFormat(value, csvFieldAnnotation, locale));
-				printStream.print(separater);
+				printStream.print(delimiter);
 			}
 			printStream.print(NEWLINE);
 		}
