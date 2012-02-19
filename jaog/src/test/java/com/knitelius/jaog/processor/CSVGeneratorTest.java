@@ -22,7 +22,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +37,9 @@ public class CSVGeneratorTest {
 
 	private Collection<Person> orderedBeanTestData = new ArrayList<Person>();
 	private Collection<Car> orderedInterfacedBeanTestData = new ArrayList<Car>();
-
-	public CSVGeneratorTest() {
+	
+	@Before
+	public void init() {
 		orderedBeanTestData.add(new Person("James", "Bond", new Date()));
 		orderedBeanTestData.add(new Person("Clive", "Cussler", new Date()));
 		orderedBeanTestData.add(new Person("Dirk", "Pitt", new Date()));
@@ -53,7 +53,7 @@ public class CSVGeneratorTest {
 	}
 
 	@Test
-	public void test() throws IllegalArgumentException, IllegalAccessException, IntrospectionException,
+	public void testOrderedCSV() throws IllegalArgumentException, IllegalAccessException, IntrospectionException,
 			InvocationTargetException, SecurityException, NoSuchFieldException {
 		CSVGenerator<Person> csvGenerator = CSVGeneratorFactory.getCSVGenerator(Person.class);
 		csvGenerator.writeCSVtoStream(orderedBeanTestData, System.out, true);
