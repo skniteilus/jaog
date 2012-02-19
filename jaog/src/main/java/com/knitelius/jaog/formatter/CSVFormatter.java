@@ -19,6 +19,7 @@ package com.knitelius.jaog.formatter;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -37,25 +38,27 @@ public class CSVFormatter {
 	 * @return
 	 */
 	public static Object applyFormat(Object value, final CSVField csvFieldAnnotation) {
-		value = applyFormat(value, csvFieldAnnotation, null);
+		value = applyFormat(value, csvFieldAnnotation, Locale.getDefault());
 		return value;
 	}
 	
 	/**
-	 * TODO: Description 
+	 * Formats input either by given Annotation or Locale
+	 * If no format is provided for Date or Calendar objects DateFormat.MEDIUM is applied.
 	 * 
 	 * @param value
 	 * @param csvFieldAnnotation
-	 * @param locale
-	 * @return
+	 * @param locale (if null JVM Default locale is applied)
+	 * @return 
 	 */
 	public static Object applyFormat(Object value, final CSVField csvFieldAnnotation, Locale locale) {
 		if(value==null) value = "null";
+		if(locale==null) locale = Locale.getDefault();
 		
-		if(csvFieldAnnotation!=null) {
-			value = applyAnnotationFormatting(value, csvFieldAnnotation);
+		if(csvFieldAnnotation != null) {
+			value = applyAnnotationFormatting(value, csvFieldAnnotation, locale);
 		}
-		else if(locale!=null) {
+		else if(locale != null) {
 			value = applyLocalizedFormatting(value, locale);
 		}
 		value = applyCSVFormat(value);
@@ -83,18 +86,26 @@ public class CSVFormatter {
 	}
 	
 	/**
-	 * Applies Localized Formatting if no format has been specified in the annotation 
+	 * Applies Localized Formatting if no format has been specified in the annotation.
+	 * DateFormat.MEDIUM is applied by default to Date or Calendar Objects 
 	 * 
 	 * @param value
 	 * @param locale
-	 * @return
+	 * @return 
 	 */
-	private static Object applyLocalizedFormatting(Object value, Locale locale) {
+	protected static Object applyLocalizedFormatting(Object value, Locale locale) {
+		if(value == null) throw new IllegalArgumentException("Value may not be null");
+		if(locale == null) throw new IllegalArgumentException("Locale may not be null");
+		
 		Class<?> fieldType = value.getClass();
-		if(fieldType == Date.class) {
+		if(Date.class == fieldType) {
 			value = DateFormat.getDateInstance(DateFormat.MEDIUM, locale).format(value);
 		}
-		else if (fieldType.isAssignableFrom(Number.class)) {
+		else if(Calendar.class.isAssignableFrom(fieldType)) {
+			value = DateFormat.getDateInstance(DateFormat.MEDIUM, locale).format(((Calendar)value).getTime());
+		}
+		else if (Number.class.isAssignableFrom(fieldType)) {
+			//FIXME: output decimal places as per input - currently 3 DP are returned
 			value = DecimalFormat.getInstance(locale).format(value);
 		}
 		return value;
@@ -108,7 +119,10 @@ public class CSVFormatter {
 	 * @param field
 	 * @return
 	 */
-	private static Object applyAnnotationFormatting(Object value, CSVField csvFieldAnnotation) {
+	protected static Object applyAnnotationFormatting(Object value, CSVField csvFieldAnnotation, Locale locale) {
+		if(value == null) throw new IllegalArgumentException("Value may not be null");
+		if(csvFieldAnnotation == null) throw new IllegalArgumentException("CSVField may not be null");
+		
 		String format = csvFieldAnnotation.format();
 		if(format != null && format.length()>0) {
 			Class<?> fieldType = value.getClass();
@@ -116,8 +130,13 @@ public class CSVFormatter {
 			if(fieldType == Date.class) {
 				value = new SimpleDateFormat(format).format(value);
 			}
-			else if (fieldType.isAssignableFrom(Number.class)) {
-				value = new DecimalFormat(format).format(value);
+			else if(Calendar.class.isAssignableFrom(fieldType)) {
+				value = new SimpleDateFormat(format).format(((Calendar)value).getTime());
+			}
+			else if (Number.class.isAssignableFrom(fieldType)) {
+				DecimalFormat df = (DecimalFormat)DecimalFormat.getInstance(locale);
+				df.applyPattern(format);
+				value = df.format(value);
 			}
 		}
 		return value;
