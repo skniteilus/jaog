@@ -18,6 +18,10 @@ package com.knitelius.jaog.processor;
 import static org.junit.Assert.*;
 
 import java.beans.IntrospectionException;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,19 +55,27 @@ public class CSVGeneratorTest {
 		orderedInterfacedBeanTestData.add(new BMW("7", null, new Date()));
 		orderedInterfacedBeanTestData.add(new BMW("3", "KO-HN-323", new Date()));
 	}
-
+	
+	//TODO: Assert statement is missing
 	@Test
 	public void testOrderedCSV() throws IllegalArgumentException, IllegalAccessException, IntrospectionException,
-			InvocationTargetException, SecurityException, NoSuchFieldException {
+			InvocationTargetException, SecurityException, NoSuchFieldException, IOException {
 		CSVGenerator<Person> csvGenerator = CSVGeneratorFactory.getCSVGenerator(Person.class);
-		csvGenerator.writeCSVtoStream(orderedBeanTestData, System.out, true);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		csvGenerator.writeCSVtoStream(orderedBeanTestData, baos, true);
+		String csv = baos.toString("UTF8");
+		System.out.println(csv);
 	}
-
+	
+	//TODO: Assert statement is missing
 	@Test
 	public void testInterfaceBeans() throws IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException, SecurityException, IntrospectionException, NoSuchFieldException {
+			InvocationTargetException, SecurityException, IntrospectionException, NoSuchFieldException, IOException {
 		CSVGenerator<Car> csvGenerator = CSVGeneratorFactory.getCSVGenerator(Car.class);
-		csvGenerator.writeCSVtoStream(orderedInterfacedBeanTestData, System.out, true);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		csvGenerator.writeCSVtoStream(orderedInterfacedBeanTestData, baos, true);
+		String csv = baos.toString("UTF8");
+		System.out.println(csv);
 	}
 
 }
