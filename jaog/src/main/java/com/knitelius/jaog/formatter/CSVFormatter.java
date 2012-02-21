@@ -37,9 +37,9 @@ public class CSVFormatter {
 	 * @param csvFieldAnnotation
 	 * @return
 	 */
-	public static Object applyFormat(Object value, final CSVField csvFieldAnnotation) {
+	public static String applyFormat(Object value, final CSVField csvFieldAnnotation) {
 		value = applyFormat(value, csvFieldAnnotation, Locale.getDefault());
-		return value;
+		return value.toString();
 	}
 	
 	/**
@@ -51,7 +51,7 @@ public class CSVFormatter {
 	 * @param locale (if null JVM Default locale is applied)
 	 * @return 
 	 */
-	public static Object applyFormat(Object value, final CSVField csvFieldAnnotation, Locale locale) {
+	public static String applyFormat(Object value, final CSVField csvFieldAnnotation, Locale locale) {
 		if(value==null) value = "null";
 		if(locale==null) locale = Locale.getDefault();
 		
@@ -63,7 +63,7 @@ public class CSVFormatter {
 		}
 		value = applyCSVFormat(value);
 		
-		return value;
+		return value.toString();
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class CSVFormatter {
 	 * @param value
 	 * @return 
 	 */
-	public static Object applyCSVFormat(Object value) {
+	public static String applyCSVFormat(Object value) {
 		if(value == null) value = "null";
 		
 		value = value.toString().replace(DOUBLE_QUOTE, CSV_ESCAPED_DOUBLE_QUOTE);
@@ -93,7 +93,7 @@ public class CSVFormatter {
 	 * @param locale
 	 * @return 
 	 */
-	protected static Object applyLocalizedFormatting(Object value, Locale locale) {
+	protected static String applyLocalizedFormatting(Object value, Locale locale) {
 		if(value == null) throw new IllegalArgumentException("Value may not be null");
 		if(locale == null) throw new IllegalArgumentException("Locale may not be null");
 		
@@ -108,7 +108,7 @@ public class CSVFormatter {
 			//FIXME: output decimal places as per input - currently 3 DP are returned
 			value = DecimalFormat.getInstance(locale).format(value);
 		}
-		return value;
+		return value.toString();
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class CSVFormatter {
 	 * @param field
 	 * @return
 	 */
-	protected static Object applyAnnotationFormatting(Object value, CSVField csvFieldAnnotation, Locale locale) {
+	protected static String applyAnnotationFormatting(Object value, CSVField csvFieldAnnotation, Locale locale) {
 		if(value == null) throw new IllegalArgumentException("Value may not be null");
 		if(csvFieldAnnotation == null) throw new IllegalArgumentException("CSVField may not be null");
 		
@@ -139,6 +139,6 @@ public class CSVFormatter {
 				value = df.format(value);
 			}
 		}
-		return value;
+		return value.toString();
 	}
 }
