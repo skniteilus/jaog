@@ -13,15 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.knitelius.jaog.annotations;
+package com.knitelius.jaog.csv.testobjects;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Date;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface CSVOrder {
-	String[] value() default {""};
+import com.knitelius.jaog.csv.annotations.CSVField;
+import com.knitelius.jaog.csv.annotations.CSVOrder;
+
+@CSVOrder({"model", "licensePlate", "registrationDate"})
+public interface Car {
+	public String getModel();
+	
+	@CSVField(title="License Plate")
+	public String getLicensePlate();
+	
+	@CSVField(format="dd/MM/yyyy")
+	public Date getRegistrationDate();
 }

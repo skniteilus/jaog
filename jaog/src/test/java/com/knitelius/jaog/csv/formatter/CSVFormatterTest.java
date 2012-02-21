@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.knitelius.jaog.formatter;
+package com.knitelius.jaog.csv.formatter;
 
 import static org.junit.Assert.*;
 
@@ -25,8 +25,9 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.knitelius.jaog.annotations.CSVField;
-import com.knitelius.jaog.testannotation.CSVFieldTestAnnotation;
+import com.knitelius.jaog.csv.annotations.CSVField;
+import com.knitelius.jaog.csv.formatter.CSVFormatter;
+import com.knitelius.jaog.csv.testannotation.CSVFieldTestAnnotation;
 
 public class CSVFormatterTest {
 	

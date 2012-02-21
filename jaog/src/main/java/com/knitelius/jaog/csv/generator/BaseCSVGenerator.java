@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.knitelius.jaog.generator;
+package com.knitelius.jaog.csv.generator;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -32,8 +32,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import com.knitelius.jaog.annotations.CSVField;
-import com.knitelius.jaog.formatter.CSVFormatter;
+import com.knitelius.jaog.csv.annotations.CSVField;
+import com.knitelius.jaog.csv.formatter.CSVFormatter;
 
 public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 

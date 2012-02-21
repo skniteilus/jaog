@@ -13,11 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.knitelius.jaog.testannotation;
+package com.knitelius.jaog.csv.testannotation;
 
 import java.lang.annotation.Annotation;
 
-import com.knitelius.jaog.annotations.CSVField;
+import com.knitelius.jaog.csv.annotations.CSVField;
 
 public class CSVFieldTestAnnotation implements CSVField {
 	

@@ -13,12 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.knitelius.jaog.testobjects;
+package com.knitelius.jaog.csv.testobjects;
 
 import java.util.Date;
 
-import com.knitelius.jaog.annotations.CSVField;
-import com.knitelius.jaog.annotations.CSVOrder;
+import com.knitelius.jaog.csv.annotations.CSVField;
+import com.knitelius.jaog.csv.annotations.CSVOrder;
 
 @CSVOrder({"firstName","lastName","dob"})
 public class Person {

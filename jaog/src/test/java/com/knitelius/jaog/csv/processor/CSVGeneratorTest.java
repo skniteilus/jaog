@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.knitelius.jaog.processor;
+package com.knitelius.jaog.csv.processor;
 
 import static org.junit.Assert.*;
 
@@ -30,12 +30,12 @@ import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.knitelius.jaog.generator.CSVGenerator;
-import com.knitelius.jaog.generator.CSVGeneratorFactory;
-import com.knitelius.jaog.testobjects.Audi;
-import com.knitelius.jaog.testobjects.BMW;
-import com.knitelius.jaog.testobjects.Car;
-import com.knitelius.jaog.testobjects.Person;
+import com.knitelius.jaog.csv.generator.CSVGenerator;
+import com.knitelius.jaog.csv.generator.CSVGeneratorFactory;
+import com.knitelius.jaog.csv.testobjects.Audi;
+import com.knitelius.jaog.csv.testobjects.BMW;
+import com.knitelius.jaog.csv.testobjects.Car;
+import com.knitelius.jaog.csv.testobjects.Person;
 
 public class CSVGeneratorTest {
 

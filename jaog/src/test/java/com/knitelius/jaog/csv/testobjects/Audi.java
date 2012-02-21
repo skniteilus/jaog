@@ -13,22 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.knitelius.jaog.testobjects;
+package com.knitelius.jaog.csv.testobjects;
 
 import java.util.Date;
 
-public class BMW implements Car {
+public class Audi implements Car {
 	
 	private String model;
 	private String licensePlate;
 	private Date registrationDate;
 	
-	public BMW(String model,String licensePlate, Date registrationDate) {
+	public Audi(String model, String licensePlate, Date registrationDate) {
 		this.model = model;
 		this.licensePlate = licensePlate;
 		this.registrationDate = registrationDate;
 	}
-	
+		
 	@Override
 	public String getModel() {
 		return model;
@@ -38,7 +38,7 @@ public class BMW implements Car {
 	public String getLicensePlate() {
 		return licensePlate;
 	}
-
+	
 	@Override
 	public Date getRegistrationDate() {
 		return registrationDate;

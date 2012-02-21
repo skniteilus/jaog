@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.knitelius.jaog.formatter;
+package com.knitelius.jaog.csv.formatter;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -23,7 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import com.knitelius.jaog.annotations.CSVField;
+import com.knitelius.jaog.csv.annotations.CSVField;
 
 public class CSVFormatter {
 	
