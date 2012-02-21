@@ -16,7 +16,8 @@
 package com.knitelius.jaog.generator;
 
 import java.beans.IntrospectionException;
-import java.io.PrintStream;
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Locale;
@@ -41,6 +42,11 @@ public class OrderedCSVGenerator<T> extends BaseCSVGenerator<T> {
 		super(beanClass, delimiter, locale);
 	}
 
+	public OrderedCSVGenerator(Class<T> beanClass, char delimiter, Locale locale, String encoding) throws IntrospectionException,
+			SecurityException, NoSuchFieldException {
+		super(beanClass, delimiter, locale, encoding);
+	}
+
 	protected void init() throws SecurityException, IntrospectionException, NoSuchFieldException {
 		super.init();
 		CSVOrder csvOrder = beanClass.getAnnotation(CSVOrder.class);
@@ -49,8 +55,8 @@ public class OrderedCSVGenerator<T> extends BaseCSVGenerator<T> {
 		}
 	}
 
-	protected void printLines(Collection<T> beans, PrintStream printStream) throws IllegalArgumentException,
-			IllegalAccessException {
+	protected void printLines(Collection<T> beans, Writer writer)
+			throws IllegalArgumentException, IllegalAccessException, IOException {
 		for (T bean : beans) {
 			for (String fieldName : order) {
 				Field field = beanFields.get(fieldName);
@@ -58,12 +64,12 @@ public class OrderedCSVGenerator<T> extends BaseCSVGenerator<T> {
 
 				Object value = field.get(bean);
 
-				value = CSVFormatter.applyFormat(value, getCSVFieldAnnotation(fieldName), locale);
+				String formattedValue = CSVFormatter.applyFormat(value, getCSVFieldAnnotation(fieldName), locale);
 
-				printStream.print(value);
-				printStream.print(delimiter);
+				writer.write(formattedValue);
+				writer.write(delimiter);
 			}
-			printStream.print(NEWLINE);
+			writer.write(NEWLINE);
 		}
 	}
 }

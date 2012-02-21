@@ -18,8 +18,11 @@ package com.knitelius.jaog.generator;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,10 +38,12 @@ import com.knitelius.jaog.formatter.CSVFormatter;
 public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 
 	protected static final char NEWLINE = '\n';
+	protected static final String DEFAULT_ENCODING = "UTF8";
 
 	protected Class<T> beanClass;
 	protected Locale locale = Locale.getDefault();
 	protected char delimiter = ';';
+	protected String encoding;
 	protected String[] order;
 	protected Map<String, Field> beanFields = new HashMap<String, Field>();
 	protected Map<String, Method> getterMethods = new HashMap<String, Method>();
@@ -46,6 +51,7 @@ public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 
 	public BaseCSVGenerator(Class<T> beanClass) throws IntrospectionException, SecurityException, NoSuchFieldException {
 		this.beanClass = beanClass;
+		this.encoding = DEFAULT_ENCODING;
 		init();
 	}
 
@@ -53,6 +59,7 @@ public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 			NoSuchFieldException {
 		this.beanClass = beanClass;
 		this.delimiter = delimiter;
+		this.encoding = DEFAULT_ENCODING;
 		init();
 	}
 
@@ -61,6 +68,16 @@ public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 		this.beanClass = beanClass;
 		this.delimiter = delimiter;
 		this.locale = locale;
+		this.encoding = DEFAULT_ENCODING;
+		init();
+	}
+
+	public BaseCSVGenerator(Class<T> beanClass, char delimiter, Locale locale, String encoding) throws IntrospectionException,
+			SecurityException, NoSuchFieldException {
+		this.beanClass = beanClass;
+		this.delimiter = delimiter;
+		this.locale = locale;
+		this.encoding = encoding;
 		init();
 	}
 
@@ -80,29 +97,35 @@ public abstract class BaseCSVGenerator<T> implements CSVGenerator<T> {
 	}
 
 	public void writeCSVtoStream(Collection<T> beans, OutputStream out, boolean title) throws IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
+			IllegalAccessException, InvocationTargetException, IOException {
 
-		PrintStream printStream = new PrintStream(out);
+		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(out, encoding);
+		Writer writer = new BufferedWriter(outputStreamWriter);
+
 		if (title) {
-			printStream = generateTitle(printStream);
+			writer = generateTitle(writer);
 		}
-		printLines(beans, printStream);
+		printLines(beans, writer);
+		writer.flush();
+		writer.close();
 	}
 
-	protected abstract void printLines(Collection<T> beans, PrintStream printStream) throws IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException;
+	protected abstract void printLines(Collection<T> beans, Writer writer)
+			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException;
 
-	protected PrintStream generateTitle(PrintStream printStream) {
+	protected Writer generateTitle(Writer writer) throws IOException {
 		for (String fieldName : order) {
 			CSVField csvFieldAnnotation = getCSVFieldAnnotation(fieldName);
+
 			String title = csvFieldAnnotation != null && csvFieldAnnotation.title().length() > 0 ? csvFieldAnnotation
 					.title() : fieldName;
-			printStream.print(CSVFormatter.applyCSVFormat(title));
-			printStream.print(delimiter);
-		}
-		printStream.print(NEWLINE);
 
-		return printStream;
+			writer.write(CSVFormatter.applyCSVFormat(title));
+			writer.write(delimiter);
+		}
+		writer.write(NEWLINE);
+
+		return writer;
 	}
 
 	/**

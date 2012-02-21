@@ -18,7 +18,8 @@ package com.knitelius.jaog.generator;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.io.PrintStream;
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -42,6 +43,11 @@ public class DefaultCSVGenerator<T> extends BaseCSVGenerator<T> {
 	public DefaultCSVGenerator(Class<T> beanClass, char delimiter, Locale locale) throws IntrospectionException, SecurityException, NoSuchFieldException {
 		super(beanClass, delimiter, locale);
 	}
+	
+	public DefaultCSVGenerator(Class<T> beanClass, char delimiter, Locale locale, String encoding)
+			throws IntrospectionException, SecurityException, NoSuchFieldException {
+		super(beanClass, delimiter, locale, encoding);
+	}
 
 	protected void init() throws IntrospectionException, SecurityException, NoSuchFieldException {
 		for (PropertyDescriptor pd : Introspector.getBeanInfo(beanClass).getPropertyDescriptors()) {
@@ -54,23 +60,23 @@ public class DefaultCSVGenerator<T> extends BaseCSVGenerator<T> {
 	}
 
 	@Override
-	protected PrintStream generateTitle(PrintStream printStream) {
+	protected Writer generateTitle(Writer writer) throws IOException {
 		for(PropertyDescriptor gMpD : getterMethodPD) {
-			printStream.print(CSVFormatter.applyCSVFormat(gMpD.getName()));
-			printStream.print(delimiter);
+			writer.write(CSVFormatter.applyCSVFormat(gMpD.getName()));
+			writer.write(delimiter);
 		}
-		printStream.print(NEWLINE);
-		return printStream;
+		writer.write(NEWLINE);
+		return writer;
 	}
 
 	@Override
-	protected void printLines(Collection<T> beans, PrintStream printStream) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	protected void printLines(Collection<T> beans, Writer writer) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
 		for(T bean : beans) {
 			for(PropertyDescriptor gMpD : getterMethodPD) {
-				printStream.print(CSVFormatter.applyCSVFormat(gMpD.getReadMethod().invoke(bean)));
-				printStream.print(delimiter);
+				writer.write(CSVFormatter.applyCSVFormat(gMpD.getReadMethod().invoke(bean)));
+				writer.write(delimiter);
 			}
-			printStream.print(NEWLINE);
+			writer.write(NEWLINE);
 		}
 	}
 

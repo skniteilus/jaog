@@ -15,10 +15,11 @@
  */
 package com.knitelius.jaog.generator;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 public interface CSVGenerator<T> {
-	public void writeCSVtoStream(Collection<T> beans, OutputStream out, boolean title) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException;
+	public void writeCSVtoStream(Collection<T> beans, OutputStream out, boolean title) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException;
 }

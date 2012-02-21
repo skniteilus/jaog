@@ -16,7 +16,8 @@
 package com.knitelius.jaog.generator;
 
 import java.beans.IntrospectionException;
-import java.io.PrintStream;
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -43,6 +44,11 @@ public class InterfacedBeanCSVGenerator<T> extends BaseCSVGenerator<T> {
 		super(beanClass, seperator, locale);
 	}
 
+	public InterfacedBeanCSVGenerator(Class<T> beanClass, char delimiter, Locale locale, String encoding)
+			throws IntrospectionException, SecurityException, NoSuchFieldException {
+		super(beanClass, delimiter, locale, encoding);
+	}
+
 	protected void init() throws SecurityException, IntrospectionException, NoSuchFieldException {
 		super.init();
 		CSVOrder csvOrder = beanClass.getAnnotation(CSVOrder.class);
@@ -52,18 +58,18 @@ public class InterfacedBeanCSVGenerator<T> extends BaseCSVGenerator<T> {
 	}
 
 	@Override
-	protected void printLines(Collection<T> beans, PrintStream printStream) throws IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
+	protected void printLines(Collection<T> beans, Writer writer)
+			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
 
 		for (T bean : beans) {
 			for (String fieldName : order) {
 				CSVField csvFieldAnnotation = getCSVFieldAnnotation(fieldName);
 				Method method = getterMethods.get(fieldName);
 				Object value = method.invoke(bean);
-				printStream.print(CSVFormatter.applyFormat(value, csvFieldAnnotation, locale));
-				printStream.print(delimiter);
+				writer.write(CSVFormatter.applyFormat(value, csvFieldAnnotation, locale));
+				writer.write(delimiter);
 			}
-			printStream.print(NEWLINE);
+			writer.write(NEWLINE);
 		}
 	}
 }
